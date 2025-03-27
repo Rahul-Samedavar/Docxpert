@@ -1,0 +1,11 @@
+langchain
+langchain-community
+tiktoken
+chromadb
+openai
+PyPDF2
+pymupdf
+docx2txt
+python-docx
+Flask
+flask-cors

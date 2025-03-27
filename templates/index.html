@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Chatbot with File Preview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LEFT: Chatbot Interface -->
+    <div class="left-section">
+
+        <!-- Chat Messages -->
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-message bot-message">
+                <p>Welcome! Upload a document and ask your queries.</p>
+            </div>
+        </div>
+
+        <!-- Chat Form -->
+        <form id="queryForm" class="chat-form">
+            <label for="fileInput" class="upload-btn" title="Upload Document">📎</label>
+            <input type="file" id="fileInput" style="display: none;">
+            <input type="text" id="queryInput" placeholder="Ask a question..." required>
+            <button type="submit">➤</button>
+        </form>
+
+    </div>
+
+    <!-- RIGHT: Scrollable File Preview -->
+    <div class="right-section">
+        <h2>File Preview</h2>
+        <iframe id="filePreview" src="" frameborder="0"></iframe>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
