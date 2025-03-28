@@ -9,3 +9,5 @@ docx2txt
 python-docx
 Flask
 flask-cors
+pdfkit
+langchain-chroma

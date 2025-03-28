@@ -1,7 +1,10 @@
-from flask import Flask, request, jsonify, send_file, render_template
+from flask import Flask, request, jsonify, send_file, render_template, render_template_string
 from werkzeug.utils import secure_filename
 import os
 import util
+
+import pdfkit
+from docx import Document
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -53,11 +56,28 @@ def query():
 @app.route('/preview/<db_name>')
 def preview(db_name):
     """Serve the preview document"""
-    doc_path = os.path.join(UPLOAD_FOLDER, db_name.replace("_", "."))
-    if os.path.exists(doc_path):
-        return send_file(doc_path)
+    file_path = os.path.join(UPLOAD_FOLDER, db_name.replace("_", "."))
+    print(file_path)
+    # PDF preview
+    if file_path.endswith('.pdf'):
+        return send_file(file_path, mimetype='application/pdf')
+
+    elif file_path.endswith('.docx'):
+        doc = Document(file_path)
+        html_content = "<html><body>"
+        
+        for para in doc.paragraphs:
+            html_content += f"<p>{para.text}</p>"
+        
+        html_content += "</body></html>"
+
+        return render_template_string(html_content)
+    # TXT preview
+    elif file_path.endswith('.txt'):
+        return send_file(file_path, mimetype='text/plain')
+
     else:
-        return "File not found", 404
+        return jsonify({'error': 'Unsupported file type'}), 400
 
 
 if __name__ == '__main__':

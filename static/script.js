@@ -20,8 +20,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (response.ok) {
             dbName = result.db_name;
-            document.getElementById('filePreview').src = `/preview/${dbName}`;
-
+            const fileExtension = dbName.split('_').pop().toLowerCase();
+            const previewFrame = document.getElementById('filePreview');
+    
+            // Handle PDF, DOCX, and TXT previews
+            console.log(fileExtension)
+            if (['pdf', 'docx', 'txt'].includes(fileExtension)) {
+                previewFrame.src = `/preview/${dbName}`;
+            } else {
+                previewFrame.src = ''; 
+                appendMessage(`❌ Unsupported file format: ${fileExtension}`, 'bot');
+            }
+    
             appendMessage(`📄 File uploaded successfully: ${dbName}`, 'bot');
         } else {
             appendMessage(`❌ Error: ${result.error}`, 'bot');
@@ -59,7 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Display message content
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('message-content');
-        contentDiv.innerHTML = `<p>${message}</p>`;
+        
+        console.log(message)
+        contentDiv.innerHTML = message.replace('\n', '<br>');
 
         // Display source page numbers
         if (sources.length > 0) {
