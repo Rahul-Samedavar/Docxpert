@@ -32,9 +32,7 @@ def ingest():
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
     file.save(file_path)
 
-    db_name = secure_filename(file.filename).replace('.', '_')
-    
-    util.ingest(file_path, db_name)
+    db_name = util.ingest(file_path)
     
     return jsonify({'message': 'File ingested successfully', 'db_name': db_name})
 
