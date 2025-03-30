@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <nav>
+        <img src="{{ url_for('static', filename='../static/assets/logo.png') }}" alt="">
+    </nav>
 
 <div class="container">
 
@@ -33,7 +36,7 @@
     <!-- RIGHT: Scrollable File Preview -->
     <div class="right-section">
         <h2>File Preview</h2>
-        <iframe id="filePreview" src="" frameborder="0"></iframe>
+        <iframe id="filePreview" src="/preview/0" frameborder="0"></iframe>
     </div>
 
 </div>

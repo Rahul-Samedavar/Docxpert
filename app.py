@@ -53,6 +53,8 @@ def query():
 
 @app.route('/preview/<db_name>')
 def preview(db_name):
+    if db_name == '0':
+        return render_template('default-preview.html')
     """Serve the preview document"""
     file_path = os.path.join(UPLOAD_FOLDER, db_name.replace("_", "."))
     print(file_path)
