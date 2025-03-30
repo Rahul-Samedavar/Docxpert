@@ -112,7 +112,9 @@ def query_rag(query_text, db_name):
 from langchain_core.prompts import PromptTemplate
 
 CONT_AWARE_QUERY_TEMPLATE = """
-You are an RAG prompt generator. Your Task is to read the conversation history and a user query and respond with a context aware query to be used for a retriever agent. Keep it short and simple and avoid stopping words.
+You are an RAG prompt generator. 
+Read the chat history and users query and modify the user query to include relevant context from the chat history.
+Your response should be as small as possible but shouldnt have any missing context.
 
 Chat History:
 {history}
