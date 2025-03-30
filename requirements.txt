@@ -11,3 +11,4 @@ Flask
 flask-cors
 pdfkit
 langchain-chroma
+reportlab

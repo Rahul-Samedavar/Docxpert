@@ -13,6 +13,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+# In-memory dictionary for conversation history
+chat_history = {}
+
 
 @app.route('/')
 def index():
@@ -43,12 +46,43 @@ def query():
     query_text = data['query']
     db_name = data['db_name']
 
+    # Initialize history if not present
+    if db_name not in chat_history:
+        chat_history[db_name] = []
+
+    # Retrieve recent history (last 5 interactions)
+    recent_history = chat_history[db_name][-5:]
+
+    # Prepare history context
+    history_context = "\n".join([f"User: {q}\nBot: {r}" for q, r in recent_history])
+
+    # Use the agent to generate a simplified RAG query
+    simplified_query = util.context_aware_query(history_context, query_text)
+
     try:
-        response, sources_with_pages = util.query_rag(query_text, db_name)
+        # Retrieve relevant contexts using simplified query
+        contexts, sources_with_pages = util.search_rag(simplified_query, db_name)
+
+        # Use the actual query with the retrieved contexts for final response
+        response = util.generate_response(query_text, contexts)
+
+        # Store the new interaction in the dictionary
+        chat_history[db_name].append((query_text, response))
+
         return jsonify({'response': response, 'sources': sources_with_pages})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/get_history/<db_name>', methods=['GET'])
+def get_history(db_name):
+    """Fetch conversation history for a specific db_name"""
+    if db_name in chat_history:
+        history = chat_history[db_name]
+        return jsonify({'history': history})
+    else:
+        return jsonify({'error': 'No history found for this db_name'}), 404
+
 
 
 @app.route('/preview/<db_name>')

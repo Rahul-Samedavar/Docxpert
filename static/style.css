@@ -1,40 +1,43 @@
 /* General Styling */
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
     color: #333;
     background: #f4f4f4;
 }
 
-nav{
+/* Navigation Bar */
+nav {
     height: 60px;
-    padding: 0px 20px;
-    background: #fff;
-    box-shadow: 2px 0 5px #ccc;
+    padding: 0 20px;
+    background: #fff;  /* Neutral background to highlight blue logo */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
-nav img{
+nav img {
     height: 90%;
+    transition: transform 0.3s ease-in-out;
 }
 
-.upload-btn{
-    display: inline-block;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    font-size: 26px;
-    border-radius: 5px;
+nav img:hover {
+    transform: scale(1.1);
 }
 
-/* Layout Split */
+/* Container Layout */
 .container {
     display: flex;
     height: calc(100vh - 60px);
+    gap: 20px;
+    padding: 20px;
 }
 
 /* Left Section: Chat Interface */
@@ -42,16 +45,17 @@ nav img{
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px;
     background: #fff;
-    box-shadow: 2px 0 5px #ccc;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
     overflow: hidden;
+    transition: 0.3s;
 }
 
 /* Chat Container */
 .chat-container {
     flex: 1;
-    height: 80%;
     overflow-y: auto;
     padding: 15px;
     border: 1px solid #ccc;
@@ -61,8 +65,7 @@ nav img{
     flex-direction: column;
 }
 
-
-/* Smooth scrolling */
+/* Scrollbar Styling */
 .chat-container::-webkit-scrollbar {
     width: 8px;
 }
@@ -80,41 +83,36 @@ nav img{
     border-radius: 18px;
     margin: 10px 0;
     max-width: 75%;
-    width: max-content;
     line-height: 1.6;
     font-size: 16px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     transition: 0.3s;
 }
 
-
-/* User Message */
+/* User & Bot Messages */
 .user-message {
     background: #007bff;
     color: #fff;
     align-self: flex-end;
     text-align: right;
+    transition: 0.3s;
 }
 
-/* Bot Message */
+.user-message:hover, .bot-message:hover {
+    transform: scale(1.05);
+}
+
 .bot-message {
-    background: #e0e0e0;
+    background: #f1f1f1;
     color: #333;
     text-align: left;
 }
 
-/* Source Styling */
+/* Source Info */
 .source-info {
     margin-top: 5px;
     font-size: 12px;
     color: #888;
-}
-
-.source-info small {
-    font-size: 12px;
-    color: #888;
-    display: inline-block;
-    margin-top: 5px;
 }
 
 /* Chat Form */
@@ -138,7 +136,7 @@ nav img{
     color: #333;
 }
 
-/* Submit Button */
+/* Buttons */
 .chat-form button {
     padding: 10px 20px;
     border: none;
@@ -151,25 +149,69 @@ nav img{
 
 .chat-form button:hover {
     background: #218838;
+    transform: scale(1.1);
 }
 
+.upload-btn {
+    cursor: pointer;
+    font-size: 26px;
+    transition: 0.3s;
+    color: #555;
+}
 
+.upload-btn:hover {
+    color: #007bff;
+    transform: scale(1.1);
+}
 
-iframe{
+/* Right Section: File Preview */
+.right-section {
+    flex: 1;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+    transition: 0.3s;
+}
+
+.right-section:hover {
+    transform: scale(1.01);
+}
+
+/* Preview Header */
+.right-section > h2 {
+    text-align: center;
+    font-size: 24px;
+    color: #555;
+}
+
+/* Iframe Preview */
+iframe {
     width: 100%;
     height: 90%;
     border: none;
     margin: 0;
     padding: 0;
+    transition: 0.3s;
 }
 
-.left-section, .right-section {
-    width: 50%;
-    overflow-y: auto;
-    padding: 20px;
+iframe:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-.right-section > h2{
-    width: 100%;
-    text-align: center;
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-message {
+    animation: fadeIn 0.5s;
 }

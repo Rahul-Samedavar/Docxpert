@@ -14,6 +14,8 @@ import keys
 # Create a temporary base folder for Chroma
 TEMP_BASE_FOLDER = tempfile.mkdtemp()
 
+
+
 # Ensure the temporary base folder is deleted on exit
 def cleanup():
     shutil.rmtree(TEMP_BASE_FOLDER)
@@ -117,3 +119,27 @@ def query_rag(query_text, db_name):
     response_text = model.predict(prompt)
 
     return response_text, sources_with_pages
+
+from langchain_core.prompts import PromptTemplate
+
+# Template for generating simplified RAG query
+SIMPLE_QUERY_PROMPT = """
+You are an RAG prompt generator. Your Task is to read the conversation history and a user query and respond with a context aware query. Keep it short and simple and avoid stopping words.
+
+Chat History:
+{history}
+
+Current Query:
+{query}
+
+Context Aware Query:
+"""
+
+def context_aware_query(history, query):
+    prompt_template = PromptTemplate.from_template(SIMPLE_QUERY_PROMPT)
+    prompt = prompt_template.format(history=history, query=query)
+
+    model = ChatOpenAI()
+    simplified_query = model.predict(prompt)
+
+    return simplified_query
