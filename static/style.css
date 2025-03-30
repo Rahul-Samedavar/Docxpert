@@ -1,4 +1,3 @@
-/* General Styling */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -12,11 +11,10 @@ body {
     background: #f4f4f4;
 }
 
-/* Navigation Bar */
 nav {
     height: 60px;
     padding: 0 20px;
-    background: #fff;  /* Neutral background to highlight blue logo */
+    background: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
@@ -32,7 +30,26 @@ nav img:hover {
     transform: scale(1.1);
 }
 
-/* Container Layout */
+#exportButton, #clearButton {
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: #007bff;
+    padding: 5px 15px;
+    border-radius: 2rem;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+#clearButton{
+    background: #ff007b;
+}
+
+.source{
+    color: #007bff;
+    cursor: pointer;
+}
+
 .container {
     display: flex;
     height: calc(100vh - 60px);
@@ -40,7 +57,6 @@ nav img:hover {
     padding: 20px;
 }
 
-/* Left Section: Chat Interface */
 .left-section {
     flex: 1;
     display: flex;
@@ -53,7 +69,6 @@ nav img:hover {
     transition: 0.3s;
 }
 
-/* Chat Container */
 .chat-container {
     flex: 1;
     overflow-y: auto;
@@ -65,7 +80,6 @@ nav img:hover {
     flex-direction: column;
 }
 
-/* Scrollbar Styling */
 .chat-container::-webkit-scrollbar {
     width: 8px;
 }
@@ -75,7 +89,6 @@ nav img:hover {
     border-radius: 10px;
 }
 
-/* Chat Message Styling */
 .chat-message {
     display: flex;
     flex-direction: column;
@@ -89,7 +102,6 @@ nav img:hover {
     transition: 0.3s;
 }
 
-/* User & Bot Messages */
 .user-message {
     background: #007bff;
     color: #fff;
@@ -108,14 +120,12 @@ nav img:hover {
     text-align: left;
 }
 
-/* Source Info */
 .source-info {
     margin-top: 5px;
     font-size: 12px;
     color: #888;
 }
 
-/* Chat Form */
 .chat-form {
     display: flex;
     align-items: center;
@@ -136,7 +146,6 @@ nav img:hover {
     color: #333;
 }
 
-/* Buttons */
 .chat-form button {
     padding: 10px 20px;
     border: none;
@@ -164,7 +173,6 @@ nav img:hover {
     transform: scale(1.1);
 }
 
-/* Right Section: File Preview */
 .right-section {
     flex: 1;
     background: #fff;
@@ -179,14 +187,12 @@ nav img:hover {
     transform: scale(1.01);
 }
 
-/* Preview Header */
 .right-section > h2 {
     text-align: center;
     font-size: 24px;
     color: #555;
 }
 
-/* Iframe Preview */
 iframe {
     width: 100%;
     height: 90%;
@@ -200,7 +206,6 @@ iframe:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;

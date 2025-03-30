@@ -11,14 +11,13 @@ import shutil
 import atexit
 import keys
 
-# Create a temporary base folder for Chroma
 TEMP_BASE_FOLDER = tempfile.mkdtemp()
 
 
 
-# Ensure the temporary base folder is deleted on exit
 def cleanup():
     shutil.rmtree(TEMP_BASE_FOLDER)
+    shutil.rmtree("uploads")
 
 atexit.register(cleanup)
 
@@ -26,11 +25,10 @@ docs_count = 0
 def get_unique_filename():
     global docs_count
     docs_count += 1
-    return f"doc_{docs_count}"
+    return f"f_{docs_count}.pdf"
 
 
 def load_document(file_path):
-    """Load documents based on file type"""
     if file_path.endswith(".pdf"):
         return PyMuPDFLoader(file_path=file_path).load()
     elif file_path.endswith(".txt"):
@@ -42,17 +40,14 @@ def load_document(file_path):
 
 
 def split_text(documents: list[Document]):
-    """Split documents into chunks"""
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=100, length_function=len, add_start_index=True)
     chunks = text_splitter.split_documents(documents)
     return chunks
 
 
 def save_to_chroma(chunks: list[Document], db_name):
-    """Save chunks to ChromaDB in a subdirectory"""
     CHROMA_PATH = os.path.join(TEMP_BASE_FOLDER, db_name)
 
-    # Remove previous folder if exists
     if os.path.exists(CHROMA_PATH):
         shutil.rmtree(CHROMA_PATH)
 
@@ -64,17 +59,13 @@ def save_to_chroma(chunks: list[Document], db_name):
     return db
 
 
-def ingest(file_path):
-    db_name = get_unique_filename()
-    """Ingest file into vector store with subdirectories"""
+def ingest(file_path, db_name):
     documents = load_document(file_path)
     chunks = split_text(documents)
     save_to_chroma(chunks, db_name)
-    return db_name
 
 
 def search(query, db_path):
-    """Search for relevant content"""
     db_dir = os.path.join(TEMP_BASE_FOLDER, db_path)
     embedding_function = OpenAIEmbeddings()
     
@@ -86,11 +77,10 @@ def search(query, db_path):
 
 
 def extract_page_numbers(results):
-    """Extract page numbers from document metadata"""
     sources_with_pages = []
     for doc, _ in results:
         page_number = doc.metadata.get("page", "N/A")
-        sources_with_pages.append(f"p.{page_number}")
+        sources_with_pages.append(f"p.{page_number+1}")
     return sources_with_pages
 
 
@@ -103,7 +93,6 @@ Answer the question based on the above context: {question}
 
 
 def query_rag(query_text, db_name):
-    """Query using RAG pipeline with ChromaDB"""
     results = search(query_text, db_name)
 
     if len(results) == 0 or results[0][1] < 0.7:
@@ -122,9 +111,8 @@ def query_rag(query_text, db_name):
 
 from langchain_core.prompts import PromptTemplate
 
-# Template for generating simplified RAG query
-SIMPLE_QUERY_PROMPT = """
-You are an RAG prompt generator. Your Task is to read the conversation history and a user query and respond with a context aware query. Keep it short and simple and avoid stopping words.
+CONT_AWARE_QUERY_TEMPLATE = """
+You are an RAG prompt generator. Your Task is to read the conversation history and a user query and respond with a context aware query to be used for a retriever agent. Keep it short and simple and avoid stopping words.
 
 Chat History:
 {history}
@@ -136,10 +124,10 @@ Context Aware Query:
 """
 
 def context_aware_query(history, query):
-    prompt_template = PromptTemplate.from_template(SIMPLE_QUERY_PROMPT)
+    prompt_template = PromptTemplate.from_template(CONT_AWARE_QUERY_TEMPLATE)
     prompt = prompt_template.format(history=history, query=query)
 
     model = ChatOpenAI()
-    simplified_query = model.predict(prompt)
+    cont_awar_query = model.predict(prompt)
 
-    return simplified_query
+    return cont_awar_query

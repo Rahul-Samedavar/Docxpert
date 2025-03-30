@@ -3,31 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAG Chatbot with File Preview</title>
+    <title>Docxpert</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename= 'assets/logo.png') }}">
 </head>
 <body>
     <nav>
         <img src="{{ url_for('static', filename='../static/assets/logo.png') }}" alt="">
+        <div class="but">
+            <button id="exportButton" class="btn">Export</button>
+            <button id="clearButton" class="btn", onclick="clearData()">Clear</button>
+        </div>
     </nav>
 
 <div class="container">
 
-    <!-- LEFT: Chatbot Interface -->
     <div class="left-section">
 
-        <!-- Chat Messages -->
         <div class="chat-container" id="chatContainer">
             <div class="chat-message bot-message">
                 <p>Welcome! Upload a document and ask your queries.</p>
             </div>
 
-            <div class="chat-message user-message">
-                <p>Welcome! Upload a document and ask your queries.</p>
-            </div>
         </div>
 
-        <!-- Chat Form -->
         <form id="queryForm" class="chat-form">
             <label for="fileInput" class="upload-btn" title="Upload Document">📎</label>
             <input type="file" id="fileInput" style="display: none;">
@@ -37,7 +36,7 @@
 
     </div>
 
-    <!-- RIGHT: Scrollable File Preview -->
+    
     <div class="right-section">
         <h2>File Preview</h2>
         <iframe id="filePreview" src="/preview/0" frameborder="0"></iframe>
