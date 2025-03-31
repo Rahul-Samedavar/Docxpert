@@ -3,6 +3,11 @@
 **Docxpert** is an AI-powered document query chatbot that leverages **Retrieval-Augmented Generation (RAG)** to provide precise and context-aware responses from PDF, Word, and Text documents. It uses **OpenAI's API** for language processing, **ChromaDB** for efficient vector storage and retrieval, and a **Flask server** to deliver a clean and interactive UI.
 
 ---
+## 🚀 **Deployed at HuggingFace Space**
+- You can run the application [here](https://huggingface.co/spaces/Rahul-Samedavar/Docxpert)
+
+
+
 
 ![](Images/Home.png)
 ![](Images/demo.png)
