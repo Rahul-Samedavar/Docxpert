@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.setItem('db_name', dbName);
 
             navToPage('p.1');
-            appendMessage(`📄 File uploaded successfully: ${dbName}`, 'bot');
+            appendMessage(`📄 File uploaded successfully`, 'bot');
         } else {
             appendMessage(`❌ Error: ${result.error}`, 'bot');
         }

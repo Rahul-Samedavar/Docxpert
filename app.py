@@ -20,7 +20,6 @@ def index():
 
 @app.route('/check_db/<db_name>', methods=['GET'])
 def check_db(db_name):
-    print(chat_history.keys(), db_name)
     if db_name in chat_history.keys():
         return jsonify({'exists': True}), 200
     else:
@@ -87,6 +86,9 @@ def query():
 
     try:
         response, sources_with_pages = util.query_rag(cont_aware_query, db_name)
+        if sources_with_pages == []:
+            response, sources_with_pages = util.query_rag(query_text, db_name)
+        
 
         chat_history[db_name].append((query_text, response))
 
