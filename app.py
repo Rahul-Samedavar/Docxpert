@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, send_file, render_template, render_template_string
 from werkzeug.utils import secure_filename
+from fpdf import FPDF
+import uuid
 import os
 import util
 
@@ -166,6 +168,31 @@ def export_chat(db_name):
 
     return send_file(pdf_filepath, as_attachment=True, download_name=pdf_filename)
 
+
+
+@app.route('/summarize/<db_name>')
+def summarize(db_name):
+    if db_name == '0':
+        return ''
+    file_path = os.path.join(UPLOAD_FOLDER, db_name)
+    try:
+        summary = util.summarize_pdf(file_path)
+
+        summary_pdf_path = os.path.join(UPLOAD_FOLDER, f"summary_{uuid.uuid4().hex}.pdf")
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.set_font("Arial", size=12)
+
+        for line in summary.split("\n"):
+            pdf.multi_cell(0, 10, txt=line)
+
+        pdf.output(summary_pdf_path)
+
+        return send_file(summary_pdf_path, as_attachment=True, download_name="summary.pdf")
+
+    except Exception as e:
+        return {"error": str(e)}, 500
 
 if __name__ == '__main__':
     app.run(debug=True)

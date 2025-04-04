@@ -149,3 +149,19 @@ def context_aware_query(history, query):
     cont_awar_query = model.predict(prompt)
 
     return cont_awar_query
+
+def summarize_pdf(file_path):
+    documents = load_document(file_path)
+    full_text = "\n".join([doc.page_content for doc in documents])
+
+    model = ChatOpenAI()
+
+    final_prompt = ChatPromptTemplate.from_template(
+        "Read the following document and write a comprehensive, multi-paragraph summary. "
+        "Ensure each paragraph focuses on different key themes, topics, or insights:\n\n{context}"
+    )
+
+    final_summary = model.predict(final_prompt.format(context=full_text))
+
+    return final_summary
+

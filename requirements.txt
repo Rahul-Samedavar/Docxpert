@@ -12,3 +12,5 @@ flask-cors
 pdfkit
 langchain-chroma
 reportlab
+fpdf
+langchain_openai

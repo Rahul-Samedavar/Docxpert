@@ -1,98 +1,107 @@
-# 📄 **Docxpert: Document Query bot with RAG**
+# 📄 **Docxpert: Document Query Bot with RAG + TTS + Summarization**
 
-**Docxpert** is an AI-powered document query chatbot that leverages **Retrieval-Augmented Generation (RAG)** to provide precise and context-aware responses from PDF, Word, and Text documents. It uses **OpenAI's API** for language processing, **ChromaDB** for efficient vector storage and retrieval, and a **Flask server** to deliver a clean and interactive UI.
+**Docxpert** is an AI-powered chatbot designed to query and interact with documents using **Retrieval-Augmented Generation (RAG)**. With support for **PDF**, **Word**, and **Text** files, it delivers intelligent, context-aware responses, **Text-to-Speech** and **Document Summarization**.
+
+It uses **OpenAI's API** for natural language processing, **ChromaDB** for fast vector search, and a **Flask server** with an intuitive UI.
 
 ---
-## 🚀 **Deployed at HuggingFace Space**
-- You can run the application [here](https://huggingface.co/spaces/Rahul-Samedavar/Docxpert)
+<p align="center">
+  <img src="Images/Home.png" width="400"/>  
+  <img src="Images/demo.png" width="400"/>
+</p>
+
+---
+
+## 🚀 **Try It on HuggingFace Spaces**
+👉 [Launch App](https://huggingface.co/spaces/Rahul-Samedavar/Docxpert)
 
 
+---
 
-
-![](Images/Home.png)
-![](Images/demo.png)
-
-## 🚀 **Features**
+## 🔥 **Features**
 
 ✅ **Multi-File Support:**  
-- Supports **PDF**, **Word (.docx)**, and **Text (.txt)** file formats for querying.  
+- Upload and query **PDF**, **Word (.docx)**, and **Text (.txt)** files.
 
-✅ **Context-Aware Queries:**  
-- Each new query continues from the previous context, maintaining the conversation flow.  
+✅ **Context-Aware Chat:**  
+- Conversations maintain flow with memory of previous queries.
 
-✅ **File Preview with Navigation:**  
-- Document preview with **full view tools** for easier access.  
-- Auto-scroll to RAG references: Clicking on a source in the response navigates directly to the corresponding page.  
+✅ **Document Preview with Navigation:**  
+- Embedded viewer with **clickable source references** for fast navigation.
 
-✅ **Temporary Sessions:**  
-- Sessions persist as long as the server is running, allowing users to **reload the page** and continue where they left off.  
+✅ **Temporary Session Memory:**  
+- Sessions persist until server restarts, allowing page reloads without data loss.
 
 ✅ **Exportable Chat History:**  
-- Save the entire conversation as a **PDF file** for reference.  
+- Save your entire chat as a **PDF file** with one click.
 
-✅ **Multi-PDF Interaction:**  
-- Interact with **multiple PDFs** without clearing previous chat history, making cross-document queries seamless.  
+✅ **Interact with Multiple Files:**  
+- Seamlessly query multiple files at once—no need to clear history.
 
-✅ **Chat Clearing Option:**  
-- Users can **clear the chat** and reset the context when required.  
+✅ **Clear Chat Option:**  
+- Easily reset conversation context.
+
+✅ **Text-to-Speech Responses:**  
+- Click to listen to responses—great for accessibility and hands-free use.
+
+✅ **Document Summarization to PDF:**  
+- Summarize uploaded documents with one click and export summaries as PDFs.
 
 ---
 
 ## ⚙️ **Tech Stack**
 
 - **LLM:** OpenAI GPT  
-- **LLM Framework:** Langchain  
+- **Framework:** LangChain  
 - **Backend:** Flask (Python)  
 - **Vector Store:** ChromaDB  
 - **UI:** HTML, CSS, JavaScript  
-- **File Processing:** PyMuPDF, pdf-kit, python-docx , docx2txt 
+- **File Handling:** PyMuPDF, pdfkit, python-docx, docx2txt  
 
 ---
 
 ## 🛠️ **Installation & Setup**
 
-### 1️⃣ **Clone the Repository**
+### 1️⃣ Clone the Repository
 ```bash
 git clone https://github.com/Rahul-Samedavar/Docxpert.git
 cd Docxpert
 ```
 
-### 2️⃣ **Create Virtual Environment**
+### 2️⃣ Create Virtual Environment
 ```bash
 python -m venv env
-source env/bin/activate  # Linux
+source env/bin/activate  # Linux/macOS
 env\Scripts\activate     # Windows
 ```
 
-### 3️⃣ **Install Dependencies**
+create a file named keys.py and add you OpenAI key as
+```python 
+import os
+
+os.environ['OPENAI_API_KEY'] = "Your OpenAI API key"
+os.environ['OPENAI_MODEL'] = "gpt-3.5-turbo"
+```
+
+### 3️⃣ Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4️⃣ **Run the Server**
+### 4️⃣ Run the App
 ```bash
 python app.py
 ```
-Open your browser and visit:  
+Then open:  
 ```
 http://127.0.0.1:5000
 ```
 
 ---
 
-## 🔥 **Usage Guide**
-
-1. **Upload Document:** Click the 📎 icon to upload PDF, DOCX, or TXT files.  
-2. **Ask Queries:** Type your questions in the chat input.  
-3. **Auto-Navigation:** Click the source reference to auto-scroll to the relevant page in the preview.  
-4. **Export History:** Click the **Export to PDF** button to save the chat history.  
-5. **Clear Chat:** Use the **Clear Chat** button to reset the context.  
-
----
 
 ## 📜 **License**
-This project is licensed under the [**MIT License**](LICENSE).  
+
+This project is licensed under the [**MIT License**](LICENSE).
 
 ---
-
-✅ **Docxpert** – Your AI-Powered Document Assistant! 🚀
