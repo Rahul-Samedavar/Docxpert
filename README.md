@@ -12,11 +12,6 @@ It uses **OpenAI's API** for natural language processing, **ChromaDB** for fast 
 
 ---
 
-## 🚀 **Try It on HuggingFace Spaces**
-👉 [Launch App](https://huggingface.co/spaces/Rahul-Samedavar/Docxpert)
-
-
----
 
 ## 🔥 **Features**
 
