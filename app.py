@@ -1,116 +1,94 @@
+"""This module implements a Flask application for ingesting and querying RAG (Relevance, Accuracy, and Granularity) databases."""
 from flask import Flask, request, jsonify, send_file, render_template, render_template_string
 from werkzeug.utils import secure_filename
 from fpdf import FPDF
 import uuid
 import os
 import util
-
 from docx import Document
-
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-
 chat_history = {}
 
 @app.route('/')
 def index():
+    """Renders the index.html template."""
     return render_template('index.html')
 
 @app.route('/check_db/<db_name>', methods=['GET'])
 def check_db(db_name):
+    """Checks if a database with the given name exists in the chat history. Returns a JSON response indicating whether the database exists or not."""
     if db_name in chat_history.keys():
-        return jsonify({'exists': True}), 200
+        return (jsonify({'exists': True}), 200)
     else:
-        return jsonify({'error': 'DB not found'}), 404
-
+        return (jsonify({'error': 'DB not found'}), 404)
 
 @app.route('/ingest', methods=['POST'])
 def ingest():
+    """Ingests a file into the RAG database. Supports ingestion of .txt, .docx, and .pdf files. Returns a JSON response with the database name and a success message."""
     if 'file' not in request.files:
-        return jsonify({'error': 'No file provided'}), 400
-
+        return (jsonify({'error': 'No file provided'}), 400)
     file = request.files['file']
-
-
     db_name = secure_filename(util.get_unique_filename())
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], db_name)
-
     if file.filename.endswith('.txt'):
         content = file.read().decode('utf-8')
         doc = SimpleDocTemplate(file_path, pagesize=LETTER)
         styles = getSampleStyleSheet()
         content_paragraphs = [Paragraph(line, styles['Normal']) for line in content.splitlines()]
-
         doc.build(content_paragraphs)
-
     elif file.filename.endswith('.docx'):
         doc = Document(file)
         pdf_content = []
-        
         for para in doc.paragraphs:
             pdf_content.append(para.text)
-
         pdf_doc = SimpleDocTemplate(file_path, pagesize=LETTER)
         styles = getSampleStyleSheet()
         content_paragraphs = [Paragraph(line, styles['Normal']) for line in pdf_content]
-        
         pdf_doc.build(content_paragraphs)
-
-    elif file.filename.endswith('.pdf') :
+    elif file.filename.endswith('.pdf'):
         file.save(file_path)
-
-    else : return jsonify({'error': 'Unsupported File Format', 'db_name': '0'})
-
+    else:
+        return jsonify({'error': 'Unsupported File Format', 'db_name': '0'})
     util.ingest(file_path, db_name)
-    
     return jsonify({'message': 'File ingested successfully', 'db_name': db_name})
-
 
 @app.route('/query', methods=['POST'])
 def query():
+    """Queries the RAG database with the given query text and database name. Returns a JSON response with the query result and sources with pages."""
     data = request.json
     query_text = data['query']
     db_name = data['db_name']
-
     if db_name not in chat_history:
         chat_history[db_name] = []
-
     recent_history = chat_history[db_name][-5:]
-
-    history_context = "\n".join([f"User: {q}\nBot: {r}" for q, r in recent_history])
-
+    history_context = '\n'.join([f'User: {q}\nBot: {r}' for q, r in recent_history])
     cont_aware_query = util.context_aware_query(history_context, query_text) if len(recent_history) > 0 else query_text
-    print("Context Aware query:", cont_aware_query)
-
+    print('Context Aware query:', cont_aware_query)
     try:
         response, sources_with_pages = util.query_rag(cont_aware_query, db_name)
         if sources_with_pages == []:
             response, sources_with_pages = util.query_rag(query_text, db_name)
-        
-
         chat_history[db_name].append((query_text, response))
-
         return jsonify({'response': response, 'sources': sources_with_pages})
-
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return (jsonify({'error': str(e)}), 500)
 
 @app.route('/get_history/<db_name>', methods=['GET'])
 def get_history(db_name):
+    """Retrieves the chat history for a given database name. Returns a JSON response with the chat history."""
     if db_name in chat_history:
         history = chat_history[db_name]
         return jsonify({'history': history})
     else:
-        return jsonify({'error': 'No history found for this db_name'}), 404
-
-
+        return (jsonify({'error': 'No history found for this db_name'}), 404)
 
 @app.route('/preview/<db_name>')
 def preview(db_name):
+    """Previews the contents of a file in the RAG database. Supports preview of .pdf, .docx, and .txt files. Returns the file contents as a response."""
     if db_name == '0':
         return render_template('default-preview.html')
     file_path = os.path.join(UPLOAD_FOLDER, db_name)
@@ -118,81 +96,60 @@ def preview(db_name):
     print(file_path)
     if ext == 'pdf':
         return send_file(file_path, mimetype='application/pdf')
-
     elif ext == 'docx' or ext == 'doc':
         doc = Document(file_path)
-        html_content = "<html><body>"
-        
+        html_content = '<html><body>'
         for para in doc.paragraphs:
-            html_content += f"<p>{para.text}</p>"
-        
-        html_content += "</body></html>"
-
+            html_content += f'<p>{para.text}</p>'
+        html_content += '</body></html>'
         return render_template_string(html_content)
-    
     elif ext == 'txt':
         return send_file(file_path, mimetype='text/plain')
-
     else:
-        return jsonify({'error': 'Unsupported file type'}), 400
-
+        return (jsonify({'error': 'Unsupported file type'}), 400)
 from reportlab.lib.pagesizes import LETTER
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
 @app.route('/export_chat/<db_name>', methods=['GET'])
 def export_chat(db_name):
-
+    """Exports the chat history for a given database name as a PDF file. Returns the PDF file as a response."""
     if db_name not in chat_history:
-        return jsonify({'error': 'No history found for this db_name'}), 404
-
+        return (jsonify({'error': 'No history found for this db_name'}), 404)
     history = chat_history[db_name]
-
-    pdf_filename = f"chat_history_{db_name}.pdf"
+    pdf_filename = f'chat_history_{db_name}.pdf'
     pdf_filepath = os.path.join(app.config['UPLOAD_FOLDER'], pdf_filename)
-
     doc = SimpleDocTemplate(pdf_filepath, pagesize=LETTER)
     styles = getSampleStyleSheet()
     content = []
-
-    content.append(Paragraph(f"Chat History: {db_name}", styles['Title']))
+    content.append(Paragraph(f'Chat History: {db_name}', styles['Title']))
     content.append(Spacer(1, 12))
-
     for i, (user, bot) in enumerate(history):
-        content.append(Paragraph(f"Q{i+1}: {user}", styles['Normal']))
+        content.append(Paragraph(f'Q{i + 1}: {user}', styles['Normal']))
         content.append(Spacer(1, 6))
-        content.append(Paragraph(f"A{i+1}: {bot}", styles['Normal']))
+        content.append(Paragraph(f'A{i + 1}: {bot}', styles['Normal']))
         content.append(Spacer(1, 12))
-
     doc.build(content)
-
     return send_file(pdf_filepath, as_attachment=True, download_name=pdf_filename)
-
-
 
 @app.route('/summarize/<db_name>')
 def summarize(db_name):
+    """Summarizes the contents of a PDF file in the RAG database. Returns the summary as a PDF file as a response."""
     if db_name == '0':
         return ''
     file_path = os.path.join(UPLOAD_FOLDER, db_name)
     try:
         summary = util.summarize_pdf(file_path)
-
-        summary_pdf_path = os.path.join(UPLOAD_FOLDER, f"summary_{uuid.uuid4().hex}.pdf")
+        summary_pdf_path = os.path.join(UPLOAD_FOLDER, f'summary_{uuid.uuid4().hex}.pdf')
         pdf = FPDF()
         pdf.add_page()
         pdf.set_auto_page_break(auto=True, margin=15)
-        pdf.set_font("Arial", size=12)
-
-        for line in summary.split("\n"):
+        pdf.set_font('Arial', size=12)
+        for line in summary.split('\n'):
             pdf.multi_cell(0, 10, txt=line)
-
         pdf.output(summary_pdf_path)
-
-        return send_file(summary_pdf_path, as_attachment=True, download_name="summary.pdf")
-
+        return send_file(summary_pdf_path, as_attachment=True, download_name='summary.pdf')
     except Exception as e:
-        return {"error": str(e)}, 500
-
+        return ({'error': str(e)}, 500)
 if __name__ == '__main__':
     app.run(debug=True)
